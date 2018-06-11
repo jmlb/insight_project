@@ -1,4 +1,4 @@
-from utils.downloader import *
+from downloader import *
 from glob import glob
 from downloader import *
 
@@ -10,3 +10,4 @@ if __name__ == "__main__":
 
 	dwnld = Downloader(zip_fname, dataset_url)
 	dwnld.get_dataset()
+	dwnld.get_images()
