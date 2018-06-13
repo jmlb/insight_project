@@ -159,6 +159,7 @@ class DownloadEG():
 
 
 	def run(self):
+
 		"""
 		Download dataset and inputs
 		"""
@@ -219,6 +220,27 @@ class DownloadEG():
 		print("No error found!")
 
 
+			flder_images = "images"
+			# download zip file
+			self.download_dataset()
+			
+			# Unzip dataset EG file
+			self.unzip_file(self.zip_fname)
+
+			#create a folder image in the EG/data folder
+			self.create_folder(flder_images, self.data_path)
+
+			#Check if folder images contains jpg images
+			img_folder = self.data_path +"/"+ flder_images +"/*.jpg"
+
+			if len(glob(img_folder)) == 0:
+				#Download image files in images
+				target_flder_dwnld = self.data_path +"/"+ flder_images
+				target_flder_dwnld = target_flder_dwnld.replace("[]", "")
+				self.download_jpg(target_flder_dwnld)
+
+			print("Image acquisition completed!")
+
 
 
 if __name__ == "__main__":
@@ -226,3 +248,4 @@ if __name__ == "__main__":
 	dwnld = DownloadEG()
 	dwnld.run()
 	dwnld.check_eg_dataset()
+
