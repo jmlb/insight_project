@@ -35,7 +35,6 @@ class DownloadEG():
 		self.data_path = "[[]EG_code_data[]]_release/data"
 		self.imgs_urls = "alldata_urls.txt"
 		self.masks_folder = "images_mask"
-		self.zipfile_exists_flag = False
 
 
 	def reporthook(self, count, block_size, total_size):
