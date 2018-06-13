@@ -1,3 +1,17 @@
+#!/usr/bin/env python
+
+"""
+	filename: downloader.py
+	Description: Download the dataset as a zip file
+				Unzip the file
+				Download all the required online images and saves them in a created images/ folder
+
+				If the images/ folder exists and is not empty - pass
+"""
+
+__author__      = "Jean-Marc Beaujour"
+
+
 import urllib.request
 import sys
 import time
@@ -5,19 +19,27 @@ from glob import glob
 import zipfile
 import os
 
-class Downloader():
 
-	def __init__(self, zip_fname, dataset_url):
-		self.zip_fname = zip_fname
-		self.dataset_url = dataset_url
+
+class DownloadEG():
+
+	def __init__(self):
+		"""
+			:dataset_url: url where to download the dataset
+			:zip_fname: save dataset as a zip file
+			:data_path: directory where the data is saved
+			:images: 
+		"""
+		self.dataset_url = "https://www.dropbox.com/s/7vl1sprdln8dg9k/EG_code_data_release.zip?dl=1"
+		self.zip_fname = "dataset_EG.zip"
 		self.data_path = "[[]EG_code_data[]]_release/data"
-		self.images_folder = "images"
 		self.imgs_urls = "alldata_urls.txt"
-		self.dataset_images = [] #keep track of images
+		self.zipfile_exists_flag = False
+
 
 	def reporthook(self, count, block_size, total_size):
 		"""
-			Download progress bar
+			Show progress bar during file download
 		"""
 		global start_time
 		if count == 0:
@@ -32,85 +54,135 @@ class Downloader():
 		sys.stdout.flush()
 
 
-	def dwnloaded_file_exists(self):
-		if self.zip_fname in glob(self.zip_fname):
+	def file_exists(self, this_file, this_folder):
+		"""
+			check that a file exists in this folder
+		""" 
+		if this_file in glob(this_folder):
 			return True
 		else:
 			return False
 
 
-	def dataset_downloader(self):
+	def folder_exists(self, this_subfolder, this_root):
 		"""
-			Download dataset from url: https://www.dropbox.com/s/7vl1sprdln8dg9k/EG_code_data_release.zip?dl=1
-		"""
-		if dwnloaded_file_exists:
-			print("The dataset already there! {}".format(self.zip_name))
-			pass
+			check that the dataset folder exits
+		""" 
+
+		if len(this_root) == 0:
+			this_root = "*"
+			this_subfolder = this_subfolder.replace("[]", "")
 		else:
-			urllib.request.urlretrieve(self.url, self.zip_fname, reporthook)
-			return zip_fname
+			this_subfolder = this_root +"/"+ this_subfolder
+			this_subfolder = this_subfolder.replace("[]", "")
+			this_root = this_root +"/*"
+
+		if this_subfolder in glob("{}".format(this_root)):
+			return True
+		else:
+			return False
 
 
-	def unzip_file(self):
-		if self.dwnloaded_file_exists():
-			with zipfile.ZipFile(self.zip_fname,"r") as zip_ref:
+	def download_dataset(self):
+		"""
+			Download dataset from 
+			url: https://www.dropbox.com/s/7vl1sprdln8dg9k/EG_code_data_release.zip?dl=1
+		"""
+		flag_zip_exists = self.file_exists(self.zip_fname, "*")
+		if flag_zip_exists:
+			print("The zip file exists! {}".format(self.zip_fname))
+		else:
+			urllib.request.urlretrieve(self.dataset_url, self.zip_fname, self.reporthook)
+
+
+	def unzip_file(self, zipfname):
+		"""
+			uncompress the downloaded zip file
+		"""
+		flag_zip_exists = self.file_exists(zipfname, "*")
+		data_path_root = self.data_path.split("/")[0]
+		flag_EG_folder_exists = self.folder_exists(data_path_root, "")
+		
+		if flag_zip_exists and not flag_EG_folder_exists:
+			with zipfile.ZipFile(zipfname, "r") as zip_ref:
 				zip_ref.extractall()
+			os.remove(zipfname) #free storage
 		else:
-			print("Could not find file: {}".format(self.zip_fname))
+			print("No file was unzipped")
 
 
-	def get_dataset(self):
-		dataset_url =  "https://www.dropbox.com/s/7vl1sprdln8dg9k/EG_code_data_release.zip?dl=1"
-		dataset_save_fname = "dataset_EG.zip"
-
-		#try:
-		#	self.dataset_downloader()
-		self.unzip_file()
-
-		#except:
-		#	print("Could not get data!")
-
-
-	def create_image_folder(self):
+	def create_folder(self, new_folder, this_path):
 		"""
 		Create a folder "images" to store all raw images downloaded from flickr.
 		List of urls are in `alldata_urls.txt`
 		"""
-		path2imgs = "{}/{}".format( self.data_path, self.images_folder)
-		path2imgs = path2imgs.replace("[]","")
-		try:
-			os.mkdir( path2imgs )
-		except Exception as e:
-			print(e)
-		return path2imgs
+		new_folder_exists = self.folder_exists(new_folder, this_path)
+
+		if not new_folder_exists:
+			path_new_folder = "{}/{}".format( this_path, new_folder)
+			path_new_folder = path_new_folder.replace("[]","")
+		
+			try:
+				os.mkdir( path_new_folder )
+			except Exception as e:
+				print(e)
 
 
-
-	def get_images(self):
+	def download_jpg(self, save_here):
 		"""
 		Download image dataset (jpeg) from flickr urls
-		
 		"""
-		target_folder = self.create_image_folder()
-		ls_urls = "{}/{}".format( self.data_path, self.imgs_urls )
-		ls_urls = ls_urls.replace('[]', '').replace('[]', '')
+		txt_urls = "{}/{}".format( self.data_path, self.imgs_urls )
+		txt_urls = txt_urls.replace('[]', '').replace('[]', '')
 		img_counter = 0
+		
 		print("Start downloading Images from Flickr .... ")
-		with open(ls_urls, "r") as handler:
+		
+		with open(txt_urls, "r") as handler:
 			for line in handler:
 				line = line.strip()
-				content = line.split(" ")
-				fname = content[0]
-				img_url = content[1]
+				line = line.split(" ")
+				fname, img_url = line[0], line[1]
 
 				if "http://" in img_url:
-					img_p = "{}/{}".format(target_folder, fname)
-					self.dataset_images.append(img_p)
-					urllib.request.urlretrieve(img_url, img_p)
+					img_path = "{}/{}".format(save_here, fname)
+					urllib.request.urlretrieve(img_url, img_path)
 					img_counter += 1
 				
 				if img_counter%50 == 0:
 					print("Number of Images downloaded: {}".format(img_counter) )
 
+		print()
 		print("Total Number of images downloaded: {}".format(img_counter))
 
+
+
+	def run(self):
+
+			flder_images = "images"
+			# download zip file
+			self.download_dataset()
+			
+			# Unzip dataset EG file
+			self.unzip_file(self.zip_fname)
+
+			#create a folder image in the EG/data folder
+			self.create_folder(flder_images, self.data_path)
+
+			#Check if folder images contains jpg images
+			img_folder = self.data_path +"/"+ flder_images +"/*.jpg"
+
+			if len(glob(img_folder)) == 0:
+				#Download image files in images
+				target_flder_dwnld = self.data_path +"/"+ flder_images
+				target_flder_dwnld = target_flder_dwnld.replace("[]", "")
+				self.download_jpg(target_flder_dwnld)
+
+			print("Image acquisition completed!")
+
+
+
+if __name__ == "__main__":
+
+	dwnld = DownloadEG()
+	dwnld.run()
