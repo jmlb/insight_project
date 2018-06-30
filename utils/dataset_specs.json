@@ -1,0 +1,9 @@
+{
+	"dataset_url": "https://www.dropbox.com/s/7vl1sprdln8dg9k/EG_code_data_release.zip?dl=1",
+	"zip_fname": "dataset_EG.zip",
+	"data_path": "[[]EG_code_data[]]_release/data",
+	"imgs_urls": "alldata_urls.txt",
+	"masks_folder": "images_mask",
+	"crop_txt": "crop.txt",
+	"images_folder": "images"
+}

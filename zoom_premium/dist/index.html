@@ -17,104 +17,77 @@ limitations under the License.
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Webcam Pacman</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-teal.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-  <script defer="" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  <link rel="stylesheet" href="/dist/1cca46dc1aeeaa87e73490b454affbf9.css">
+  <title>Zoom Premium - Insight Data Science Fellowship (June 2018)</title>
+  <link rel="stylesheet" href="/dist/523ba85ed7cfa243f0f7e684abe01a5c.css">
 </head>
 <body>
 
-  <div id="status">Loading mobilenet...</div>
+
+<div id="status">Loading model...</div>
   
-  <div class="controller-panels" id="controller" style="display:none">
+<div class="controller-panels" id="controller" style="display:none;">
+  <br>
+  <br>
+  <span id="zoom-title">Zoom <font style="color: #FFD700;"> Premium</font> <br><br></span>
+<!-- container video row -->
+      <div id="settings">
+        Settings
+        <hr id="setting-hr">
+        <br>
+        <br>
+        <span> <button id="show_original" style="background-color: #f44336; width: 100px; border-radius: 2px; font-size: 1.1rem"> OFF </button></span>
+        <span><button id="predict" style="background-color: #4CAF50; width: 100px; border-radius: 2px;font-size: 1.1rem; text-align: center"> ON </button></span>
+        <br>
+        <br>
+        <fieldset>
+          <legend id="legend">Custom BCK</legend>
 
-    <div class="panel training-panel">
-
-      <!-- Big buttons. -->
-      <div class="panel-row big-buttons">
-        <button id="train">
-          <img width="66" height="66" src="/dist/d1b42d3251a9e94c09bd6f378d093dfe.svg">
-          <span id="train-status">TRAIN MODEL</span>
-        </button>
-        <button id="predict">
-          <img width="66" height="66" src="/dist/d1b42d3251a9e94c09bd6f378d093dfe.svg">
-          <span>Predict</span>
-        </button>
-      </div><!-- /.panel-row -->
-
-      <div class="panel-row params-webcam-row">
-
-        <div class="webcam-box-outer">
-          <div class="webcam-box-inner">
-            <video autoplay="" playsinline="" muted="" id="webcam" width="224" height="224"></video>
-          </div>
-          <br>
-
-        </div>
-      </div><!-- /.panel-row -->
-
-    </div><!-- /.panel -->
-    OKKKK
-    <canvas id="mask_class" width="224" height="224" style="border: 1px solid #111111">
-    <div class="panel joystick-panel">
-
-      <div class="panel-row panel-row-top">
-
-
-        <div class="panel-cell panel-cell-right panel-cell-fill">
-        </div><!-- ./panel-cell -->
-
-      </div><!-- /.panel-row -->
-      <div class="panel-row panel-row-middle">
-        <div class="panel-cell panel-cell-left">
-          <div class="thumb-box">
-            <div class="thumb-box-outer">
-              <div class="thumb-box-inner">
-                <canvas class="thumb" width="224" height="224" id="left-thumb"></canvas>
-              </div>
-              <button class="record-button" id="left"><span style="color:green">positive Sample</span></button>
+            <div class="control">
+              <select name="custom_bkg" id="custom_bkg" style="width: 120px; font-size:1rem" tabindex="1">
+                <option value="black" selected="selected">Black</option>
+                <option value="dist/b0b9a8a6f35db0b62e443d7853853e90.jpg">library</option>
+                <option value="dist/d4c0ef68b6db24826922c55f33919665.jpg">office</option>
+                <option value="dist/09f913c68ab75115d26ec227daad16c7.jpeg">beach</option>
+                <option value="dist/80b8bee8f22deddcd2715c4d59c1a485.jpg">nature</option>
+              </select>
             </div>
-            <p>
-              <span id="left-total">0</span> examples
-            </p>
-          </div>
-        </div><!-- ./panel-cell -->
+        </fieldset>
+      </div>
 
-      
+      <div id="original-frames">
+        Original Video feed
+        <br>
+        <br>
+        <video autoplay="" playsinline="" muted="" id="webcam" width="224px" height="224px" style="align: center"></video>
+      </div>
+        
+      <!-- container video Matted -->
+      <div id="matted">
+        Matted frame<br><br>
+        <canvas id="combo_class" width="224px" height="224x"></canvas>
+      </div>
+        
+      <!-- container video Mask -->
+      <div id="mask">
+        Inference mask
+        <br>
+        <br>
+        <canvas id="mask_class" width="224px" height="224px; "></canvas>
+      </div>
+      <!-- container video Mask -->
 
-        <div class="panel-cell panel-cell-right">
-          <div class="thumb-box">
-            <div class="thumb-box-outer">
-              <div class="thumb-box-inner">
-                <canvas class="thumb" width="224" height="224" id="right-thumb"></canvas>
-              </div>
-              <button class="record-button" id="right"><span style="color:red">negative Sample</span></button>
-            </div>
-            <p>
-              <span id="right-total">0</span> examples
-            </p>
-          </div>
-        </div><!-- ./panel-cell -->
-
-      </div><!-- /.panel-row -->
-
-      <div class="panel-row panel-row-bottom">
-
-        <div class="panel-cell panel-cell-left panel-cell-fill">
-        </div><!-- ./panel-cell -->
-
-        <div class="panel-cell panel-cell-right panel-cell-fill">
-        </div><!-- ./panel-cell -->
-
-      </div><!-- /.panel-row -->
+      <br>
+      <br>
+      <font style="color: #FFF; font-size:1.2em">Frame rate: <span id="fps"></span></font>
+    <!-- store the background image -->
+      <!-- ./container video row -->
+</div>
 
 
-    </div><!-- /.panel -->
 
-  </canvas></div><!-- /#controller -->
-
+<!--
+https://www.torontopubliclibrary.ca/content/branches/images/dawes-road-library-exterior.jpg
+-->
   <script src="/dist/tfjs-examples-webcam-transfer-learning.js"></script>
 </body>
 </html>
