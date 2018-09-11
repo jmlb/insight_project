@@ -10,7 +10,12 @@
 """
 
 
-import urllib.request
+import sys
+if sys.version_info >= (3, 0):
+    import urllib.request as ulib
+else:
+    import urllib as ulib
+
 import sys
 import time
 import json
@@ -91,7 +96,7 @@ class DownloadEG():
 			this_root = "*"
 			this_subfolder = this_subfolder.replace("[]", "")
 		else:
-			this_subfolder = this_root +"/"+ this_subfolder
+			this_subfolder = os.path.join(this_root, this_subfolder)
 			this_subfolder = this_subfolder.replace("[]", "")
 			this_root = this_root +"/*"
 
@@ -110,7 +115,7 @@ class DownloadEG():
 		if flag_zip_exists:
 			print("The zip file exists! {}".format(self.zip_fname))
 		else:
-			urllib.request.urlretrieve(self.dataset_url, self.zip_fname, self.reporthook)
+			ulib.urlretrieve(self.dataset_url, self.zip_fname, self.reporthook)
 
 
 	def unzip_file(self, zipfname):
@@ -137,7 +142,7 @@ class DownloadEG():
 		new_folder_exists = self.folder_exists(new_folder, this_path)
 
 		if not new_folder_exists:
-			path_new_folder = "{}/{}".format( this_path, new_folder)
+			path_new_folder = os.path.join(this_path, new_folder)
 			path_new_folder = path_new_folder.replace("[]","")
 		
 			try:
@@ -164,7 +169,7 @@ class DownloadEG():
 
 				if "http://" in img_url:
 					img_path = "{}/{}".format(save_here, fname)
-					urllib.request.urlretrieve(img_url, img_path)
+					ulib.urlretrieve(img_url, img_path)
 					img_counter += 1
 				
 				if img_counter%50 == 0:

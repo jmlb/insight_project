@@ -6,7 +6,7 @@
 Zoom premium is a semantic segmentation app that is tasked to remove or replace the background in webcam live video stream. The Deep Learning model is based on MobileNet and UNet, and as a result it has a small footprint: about 6 million parameters. This demo shows how inference conducted exclusively on the client browser can be performed even for ressource heavy tasks such as semantic segmentation. 
 
  
-For more info about how I build the app check out the post.
+For more info about how I build the "app" check out the post @
 
 https://medium.com/@jmlbeaujour/real-time-matting-of-webcam-video-on-the-browser-part-1-2c71a330ed08
 
@@ -17,7 +17,7 @@ Main File: `Segmentation_Model.ipynb`
 
 Dependencies: `utils/rawdata_prep.py` and `utils/downloader.py`
 
-The jupyter notebook performs the following job:
+The jupyter notebook performs the following task:
 
 	1. Download of the Flickr Portrait Dataset from Dropbox (zip file): includes masks (mat files) and image crop info (in text file)
 
@@ -34,6 +34,10 @@ The jupyter notebook performs the following job:
 	7. Convert model to TFJS format
 
 	8. Upload converted model to Google Cloud Storage bucket
+
+Compatibility: 
+  + python 2.7
+  + python 3
 
 
 ## The app (in browser)
